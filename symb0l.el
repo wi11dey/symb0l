@@ -34,19 +34,12 @@
   "Use top row of keyboard for symbols instead of numbers."
   :group 'editing)
 
-(defun symb0l--on ()
-  (remove-hook 'pre-command-hook #'symb0l--on)
-  (internal-push-keymap symb0l-map 'overriding-terminal-local-map))
-
-(defun symb0l--off ()
-  (internal-pop-keymap symb0l-map 'overriding-terminal-local-map))
-
 (defmacro symb0l--unread (event)
   `(lambda ()
      ,(format-message "Equivalent to pressing `%s'." (key-description (vector event)))
      (interactive)
-     (symb0l--off)
-     (add-hook 'pre-command-hook #'symb0l--on)
+     (symb0l-map-mode -1)
+     (add-hook 'pre-command-hook #'symb0l-map-mode)
      (push ',event unread-input-method-events)))
 
 (defconst symb0l-map
@@ -95,17 +88,32 @@
     map)
   "Keymap for `symb0l-mode'.")
 
+(define-minor-mode symb0l-map-mode
+  nil
+  :global t
+  :keymap symb0l-map
+  (when symb0l-map-mode
+    (remove-hook 'pre-command-hook #'symb0l-map-mode)))
+
+(defun symb0l-read-passwd (oldfun &rest args)
+  (symb0l-map-mode -1)
+  (unwind-protect
+      (apply oldfun args)
+    (symb0l-map-mode 1)))
+
 ;;;###autoload
 (define-minor-mode symb0l-mode
   nil
   :global t
   :keymap nil
   ;;;; Teardown
-  (remove-hook 'pre-command-hook #'symb0l--on)
-  (symb0l--off)
+  (remove-hook 'pre-command-hook #'symb0l-map-mode)
+  (advice-remove #'read-passwd #'symb0l-read-passwd)
+  (symb0l-map-mode -1)
   (when symb0l-mode
     ;;;; Construction
-    (symb0l--on)))
+    (advice-add #'read-passwd :around #'symb0l-read-passwd)
+    (symb0l-map-mode 1)))
 
 (provide 'symb0l)
 
