@@ -35,12 +35,17 @@
   :group 'editing)
 
 (defmacro symb0l--unread (event)
-  `(lambda ()
-     ,(format-message "Equivalent to pressing `%s'." (key-description (vector event)))
-     (interactive)
-     (symb0l-map-mode -1)
-     (add-hook 'pre-command-hook #'symb0l-map-mode)
-     (push ',event unread-input-method-events)))
+  (let* ((description (key-description (vector event)))
+	 (name (intern (concat "symb0l--press-" description))))
+    `(progn
+       (defun ,name ()
+	 ,(format-message "Equivalent to pressing `%s'." description)
+	 (interactive)
+	 (symb0l-map-mode -1)
+	 (add-hook 'pre-command-hook #'symb0l-map-mode)
+	 (push ',event unread-input-method-events))
+       (add-to-list 'mc/cmds-to-run-once #',name)
+       #',name)))
 
 (defconst symb0l-map
   (let ((map (make-sparse-keymap)))
