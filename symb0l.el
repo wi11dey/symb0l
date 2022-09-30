@@ -44,7 +44,8 @@
 	 (symb0l-map-mode -1)
 	 (add-hook 'pre-command-hook #'symb0l-map-mode)
 	 (push ',event unread-input-method-events))
-       (add-to-list 'mc/cmds-to-run-once #',name)
+       (with-eval-after-load 'multiple-cursors-core
+	 (add-to-list 'mc/cmds-to-run-once #',name))
        #',name)))
 
 (defconst symb0l-map
