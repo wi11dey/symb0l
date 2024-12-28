@@ -54,7 +54,7 @@
     (define-key map "!"           (symb0l--unread ?1))
     (define-key map "2"           (symb0l--unread ?$))
     (define-key map "@"           (symb0l--unread ?2))
-    (define-key map "3"           (symb0l--unread S-menu))
+    (define-key map "3"           (symb0l--unread ?\M-\s))
     (define-key map "#"           (symb0l--unread ?3))
     (define-key map "4"           (symb0l--unread ?\{))
     (define-key map "$"           (symb0l--unread ?4))
