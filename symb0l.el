@@ -116,6 +116,9 @@
   (when symb0l-map-mode
     (remove-hook 'pre-command-hook #'symb0l-map-mode)))
 
+(defun symb0l-map-mode-enable (&rest args)
+  (symb0l-map-mode 1))
+
 (defun symb0l-read-passwd (oldfun &rest args)
   (symb0l-map-mode -1)
   (unwind-protect
@@ -129,11 +132,13 @@
   :keymap nil
   ;;;; Teardown
   (remove-hook 'pre-command-hook #'symb0l-map-mode)
+  (advice-remove #'quail-add-unread-command-events #'symb0l-map-mode-enable)
   (advice-remove #'read-passwd #'symb0l-read-passwd)
   (symb0l-map-mode -1)
   (when symb0l-mode
     ;;;; Construction
     (advice-add #'read-passwd :around #'symb0l-read-passwd)
+    (advice-add #'quail-add-unread-command-events :before #'symb0l-map-mode-enable)
     (symb0l-map-mode 1)))
 
 (provide 'symb0l)
