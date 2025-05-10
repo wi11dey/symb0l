@@ -1,1 +1,9 @@
-#+title: symb0l
+#+title:symb0l
+
+How often do you really type numbers using the number row?
+
+symb0l is for you if:
+- you do data entry using the numpad, and/or
+- you type symbols more often than you type numbers
+
+symb0l remaps the top row of numbers to more common symbols used in programming or LaTeX input, so you don’t waste precious keyboard real estate on keys you rarely use. Numbers are still available via the Shift key, or via the the Fn keys.
