@@ -26,87 +26,87 @@
 
 ;;; Commentary:
 
-;; commentary
+;; See README.org
 
 ;;; Code:
+
+(eval-when-compile
+  (require 'cl-lib))
 
 (defgroup symb0l ()
   "Use top row of keyboard for symbols instead of numbers."
   :group 'editing)
 
-(defmacro symb0l--unread (event)
-  (let* ((description (key-description (vector event)))
-	 (name (intern (concat "symb0l--press-" description))))
-    `(progn
-       (defun ,name ()
-	 ,(format-message "Equivalent to pressing `%s'." description)
-	 (interactive)
-	 (symb0l-map-mode -1)
-	 (add-hook 'pre-command-hook #'symb0l-map-mode)
-	 (push ',event unread-input-method-events))
-       (with-eval-after-load 'multiple-cursors-core
-	 (add-to-list 'mc/cmds-to-run-once #',name))
-       #',name)))
+(defvar-keymap symb0l-remappings
+  :doc "Remappings of number keys to symbols"
+  "1"             ?*
+  "!"             ?1
+  "2"             ?$
+  "@"             ?2
+  "3"             ?\M-\s
+  "#"             ?3
+  "4"             ?\{
+  "$"             ?4
+  "5"             ?\}
+  "%"             ?5
+  "6"             ?_
+  "^"             ?6
+  "7"             ?\\
+  "&"             ?7
+  "8"             ?\(
+  "*"             ?8
+  "9"             ?\)
+  "("             ?\9
+  "0"             ?&
+  ")"             ?0
+  "{"             ??
+  "}"             ?!
+  "\\"            ?^
+  "_"             ?%
+  "~"             ?#
+  "?"             ?@
+  "<f1>"          ?1
+  "<f2>"          ?2
+  "<f3>"          ?3
+  "<f4>"          ?4
+  "<f5>"          ?5
+  "<f6>"          ?6
+  "<f7>"          ?7
+  "<f8>"          ?8
+  "<f9>"          ?9
+  "<f10>"         ?0
+  "<f11>"         ?.
+  "<kp-1>"        ?1
+  "<kp-2>"        ?2
+  "<kp-3>"        ?3
+  "<kp-4>"        ?4
+  "<kp-5>"        ?5
+  "<kp-6>"        ?6
+  "<kp-7>"        ?7
+  "<kp-8>"        ?8
+  "<kp-9>"        ?9
+  "<kp-0>"        ?0
+  "<kp-decimal>"  ?.
+  "<kp-divide>"   ?/
+  "<kp-multiply>" ?*
+  "<kp-subtract>" ?-
+  "<kp-add>"      ?+
+  "<escape>"      ?~
+  "<home>"        ?\C-g
+  "<menu>"        ?\C-g
+  "<apps>"        ?\C-g)
+
+(defun symb0l-self-insert-command ()
+  (interactive)
+  (symb0l-map-mode -1)
+  (add-hook 'pre-command-hook #'symb0l-map-mode)
+  (push (lookup-key symb0l-remappings (this-command-keys)) unread-input-method-events))
 
 (defconst symb0l-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "1"           (symb0l--unread ?*))
-    (define-key map "!"           (symb0l--unread ?1))
-    (define-key map "2"           (symb0l--unread ?$))
-    (define-key map "@"           (symb0l--unread ?2))
-    (define-key map "3"           (symb0l--unread ?\M-\s))
-    (define-key map "#"           (symb0l--unread ?3))
-    (define-key map "4"           (symb0l--unread ?\{))
-    (define-key map "$"           (symb0l--unread ?4))
-    (define-key map "5"           (symb0l--unread ?\}))
-    (define-key map "%"           (symb0l--unread ?5))
-    (define-key map "6"           (symb0l--unread ?_))
-    (define-key map "^"           (symb0l--unread ?6))
-    (define-key map "7"           (symb0l--unread ?\\))
-    (define-key map "&"           (symb0l--unread ?7))
-    (define-key map "8"           (symb0l--unread ?\())
-    (define-key map "*"           (symb0l--unread ?8))
-    (define-key map "9"           (symb0l--unread ?\)))
-    (define-key map "("           (symb0l--unread ?\9))
-    (define-key map "0"           (symb0l--unread ?&))
-    (define-key map ")"           (symb0l--unread ?0))
-    (define-key map "{"           (symb0l--unread ??))
-    (define-key map "}"           (symb0l--unread ?!))
-    (define-key map "\\"          (symb0l--unread ?^))
-    (define-key map "_"           (symb0l--unread ?%))
-    (define-key map "~"           (symb0l--unread ?#))
-    (define-key map "?"           (symb0l--unread ?@))
-    (define-key map  [ f1]        (symb0l--unread ?1))
-    (define-key map  [ f2]        (symb0l--unread ?2))
-    (define-key map  [ f3]        (symb0l--unread ?3))
-    (define-key map  [ f4]        (symb0l--unread ?4))
-    (define-key map  [ f5]        (symb0l--unread ?5))
-    (define-key map  [ f6]        (symb0l--unread ?6))
-    (define-key map  [ f7]        (symb0l--unread ?7))
-    (define-key map  [ f8]        (symb0l--unread ?8))
-    (define-key map  [ f9]        (symb0l--unread ?9))
-    (define-key map  [f10]        (symb0l--unread ?0))
-    (define-key map  [f11]        (symb0l--unread ?.))
-    (define-key map [kp-1]        (symb0l--unread ?1))
-    (define-key map [kp-2]        (symb0l--unread ?2))
-    (define-key map [kp-3]        (symb0l--unread ?3))
-    (define-key map [kp-4]        (symb0l--unread ?4))
-    (define-key map [kp-5]        (symb0l--unread ?5))
-    (define-key map [kp-6]        (symb0l--unread ?6))
-    (define-key map [kp-7]        (symb0l--unread ?7))
-    (define-key map [kp-8]        (symb0l--unread ?8))
-    (define-key map [kp-9]        (symb0l--unread ?9))
-    (define-key map [kp-0]        (symb0l--unread ?0))
-    (define-key map [kp-decimal]  (symb0l--unread ?.))
-    (define-key map [kp-divide]   (symb0l--unread ?/))
-    (define-key map [kp-multiply] (symb0l--unread ?*))
-    (define-key map [kp-subtract] (symb0l--unread ?-))
-    (define-key map [kp-add]      (symb0l--unread ?+))
-    (define-key map [escape]      (symb0l--unread ?~))
-    (define-key map [home]        (symb0l--unread ?\C-g))
-    (define-key map [menu]        (symb0l--unread ?\C-g))
-    (define-key map [apps]        (symb0l--unread ?\C-g))
-    map)
+  (cl-loop with map = (make-sparse-keymap)
+           for key being the key-codes of symb0l-remappings
+           do (define-key map (vector key) #'symb0l-self-insert-command)
+           finally return map)
   "Keymap for `symb0l-mode'.")
 
 (define-minor-mode symb0l-map-mode
