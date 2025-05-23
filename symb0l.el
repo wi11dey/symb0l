@@ -102,7 +102,8 @@
   (add-hook 'pre-command-hook #'symb0l-map-mode)
   (push (lookup-key symb0l-remappings (this-command-keys)) unread-input-method-events))
 
-(add-to-list 'mc/cmds-to-run-once #'symb0l-self-insert-command)
+(with-eval-after-load 'multiple-cursors-core
+  (add-to-list 'mc/cmds-to-run-once #'symb0l-self-insert-command))
 
 (defconst symb0l-map
   (cl-loop with map = (make-sparse-keymap)
